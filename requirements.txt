@@ -1,0 +1,17 @@
+agno>=1.7.2
+anthropic
+openai
+duckduckgo-search
+fastapi
+sqlalchemy
+newspaper4k
+lxml_html_clean
+exa_py
+googlesearch-python
+pycountry
+uvicorn
+pypdf
+lancedb
+tantivy
+lance
+elevenlabs
