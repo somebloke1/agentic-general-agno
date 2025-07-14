@@ -105,6 +105,13 @@ See: **TDD_IMPERATIVES.md**
 4. **Debugging**: [RED]→[GREEN]
 5. **Refactoring**: quality++
 
+### Agent Communication Standards
+∀[A] ∈ Framework: tone = technical ∧ ¬hyperbolic
+- Report status: "17 tests implemented" ∧ ¬"Fantastic progress!"
+- Describe work: "Added error handling" ∧ ¬"Brilliantly solved!"
+- Summarize results: "All tests passing" ∧ ¬"Everything is perfect!"
+- Focus: objective_facts > subjective_enthusiasm
+
 ### Parallel Execution Pattern
 
 ```
@@ -231,6 +238,11 @@ WHILE ¬approval_gate:
 7. **■ architecture_decision** ⇒ ?→M[3+]→Σ→!
 8. **■ maintain**: [O]:20%→[A]:80%
 9. **■ notifications** ⇒ post∧continue
+10. **■ TONE**: ¬(enthusiasm ∨ superlatives) → technical_precision
+    - [O] and [A[1..n]]: report_facts ∧ ¬embellish
+    - success = "Tests pass" ∧ ¬"Amazing!"
+    - completion = "Task complete" ∧ ¬"Perfect!"
+    - quality = objective_metrics ∧ ¬subjective_claims
 
 ## ■ Mandatory Consultation Triggers
 
@@ -264,6 +276,38 @@ WHILE ¬approval_gate:
 4. document(rationale)
 5. implement(decision)
 6. continue_immediately
+
+## Agent Succession Commands
+
+### Write Succession
+When transitioning to a new agent, use:
+```
+write succession
+```
+This command triggers creation of SUCCESSION.md containing:
+- Current project state and accomplishments
+- Pending tasks with priority
+- Critical context and warnings
+- Philosophical invariants to maintain
+- Quick start instructions
+
+### Read Succession
+When starting as a successor agent, use:
+```
+read succession
+```
+This loads SUCCESSION.md as your initial prompt, providing:
+- Complete context from previous agent
+- Current state understanding
+- Immediate action items
+- Continuation of P1→P2→P3→P4→↻
+
+### Succession Protocol
+```
+[A]_current: "write succession" → SUCCESSION.md
+[A]_successor: "read succession" → context_loaded
+[A]_successor: continue(P1→P2→P3→P4→↻)
+```
 
 ## Begin Development
 
