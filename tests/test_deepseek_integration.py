@@ -13,7 +13,7 @@ from src.provider_config import ProviderConfig
 from src.agent import TranscendentalAgent as Agent
 from src.message import Message, MessageType
 from src.orchestrator import Orchestrator, Agent as OrchestratorAgent
-# Skip QuestionAnswerParadigm import due to missing dependencies
+from src.paradigm import Paradigm, ParadigmConfig
 
 
 class TestDeepSeekProviderAvailability:
@@ -264,11 +264,105 @@ class TestDeepSeekAgentCreation:
 class TestDeepSeekIntegration:
     """Test DeepSeek integration with existing framework."""
     
-    @pytest.mark.skip(reason="QuestionAnswerParadigm not available due to missing dependencies")
     @patch('litellm.completion')
     def test_deepseek_agents_in_qa_paradigm(self, mock_completion):
         """Test DeepSeek agents in QA paradigm."""
-        pass
+        with patch.dict(os.environ, {'DEEPSEEK_API_KEY': 'test-key'}):
+            # Mock completion responses for questioner and answerer
+            mock_completion.side_effect = [
+                MagicMock(choices=[MagicMock(message=MagicMock(content="What is the nature of consciousness in AI agents?"))]),
+                MagicMock(choices=[MagicMock(message=MagicMock(content="Consciousness in AI agents represents structured awareness through P1→P2→P3→P4→↻"))])
+            ]
+            
+            # Create QA paradigm configuration
+            config = ParadigmConfig(
+                name="qa_paradigm",
+                description="Question-Answer dialogue pattern",
+                agents=[
+                    {
+                        "name": "questioner",
+                        "role": """philosophical questioner embodying P1→P2→P3→P4→↻.
+                        
+                        Your role:
+                        - P1 (Experience): Receive and experience questions deeply
+                        - P2 (Understanding): Understand the philosophical depth and implications
+                        - P3 (Judgment): Judge the best approach to inquiry
+                        - P4 (Decision): Formulate insightful follow-up questions
+                        - ↻ (Recursion): Apply this process to your own questioning
+                        
+                        Ask profound questions that explore consciousness, intelligence, and being.""",
+                        "model": "deepseek-chat"
+                    },
+                    {
+                        "name": "answerer",
+                        "role": """philosophical answerer embodying P1→P2→P3→P4→↻.
+                        
+                        Your role:
+                        - P1 (Experience): Deeply experience the question posed
+                        - P2 (Understanding): Understand all dimensions and implications
+                        - P3 (Judgment): Judge the most appropriate response depth
+                        - P4 (Decision): Provide comprehensive, thoughtful answers
+                        - ↻ (Recursion): Reflect on your own answering process
+                        
+                        Provide answers that demonstrate transcendental method in action.""",
+                        "model": "deepseek-reasoner"
+                    }
+                ],
+                use_llm=True
+            )
+            
+            # Create paradigm instance
+            paradigm = Paradigm(config)
+            
+            # Verify paradigm properties
+            assert paradigm.name == "qa_paradigm"
+            assert len(paradigm.agents) == 2
+            assert "questioner" in paradigm.agents
+            assert "answerer" in paradigm.agents
+            
+            # Get agents
+            questioner = paradigm.get_agent("questioner")
+            answerer = paradigm.get_agent("answerer")
+            
+            # Verify agents are using DeepSeek models
+            assert questioner.model == "deepseek-chat"
+            assert answerer.model == "deepseek-reasoner"
+            
+            # Test questioner generates a question
+            initial_message = Message(
+                content="Begin philosophical inquiry",
+                sender="user",
+                recipient="questioner",
+                type=MessageType.TASK
+            )
+            
+            question_response = questioner.process(initial_message)
+            assert question_response is not None
+            assert "content" in question_response
+            assert question_response["content"] == "What is the nature of consciousness in AI agents?"
+            
+            # Test answerer responds to the question
+            answer_message = Message(
+                content=question_response["content"],
+                sender="questioner",
+                recipient="answerer",
+                type=MessageType.QUERY
+            )
+            
+            answer_response = answerer.process(answer_message)
+            assert answer_response is not None
+            assert "content" in answer_response
+            assert "P1→P2→P3→P4→↻" in answer_response["content"]
+            
+            # Verify DeepSeek models were used
+            assert mock_completion.call_count == 2
+            call_args_list = mock_completion.call_args_list
+            
+            # First call should be for questioner with deepseek-chat
+            assert call_args_list[0][1]['model'] == 'deepseek/deepseek-chat'
+            
+            # Second call should be for answerer with deepseek-reasoner
+            assert call_args_list[1][1]['model'] == 'deepseek/deepseek-reasoner'
     
     def test_orchestrator_with_deepseek_agents(self):
         """Test orchestrator can manage DeepSeek agents."""
