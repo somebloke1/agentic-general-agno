@@ -1,6 +1,7 @@
 agno>=1.7.2
 anthropic
 openai
+google-generativeai
 duckduckgo-search
 fastapi
 sqlalchemy
@@ -15,3 +16,6 @@ lancedb
 tantivy
 lance
 elevenlabs
+python-dotenv
+jsonschema
+litellm
