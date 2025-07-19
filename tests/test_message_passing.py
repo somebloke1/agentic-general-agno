@@ -8,6 +8,14 @@ import pytest
 from typing import Dict, Any, List
 from src.agent import TranscendentalAgent
 from src.message import Message, MessageType
+from src.provider_config import ProviderConfig
+from .test_json_config_helpers import create_minimal_json_config
+
+
+# Create a minimal test provider config at module level
+# These tests don't actually use LLMs, so we just need a valid config
+TEST_CONFIG_DATA = create_minimal_json_config()
+TEST_PROVIDER_CONFIG = ProviderConfig(config=TEST_CONFIG_DATA)
 
 
 class TestMessagePassing:
@@ -31,8 +39,8 @@ class TestMessagePassing:
         
     def test_agent_send_message(self):
         """Test agent can send messages."""
-        sender = TranscendentalAgent(name="sender", role="questioner")
-        recipient = TranscendentalAgent(name="recipient", role="answerer")
+        sender = TranscendentalAgent(name="sender", role="questioner", provider_config=TEST_PROVIDER_CONFIG)
+        recipient = TranscendentalAgent(name="recipient", role="answerer", provider_config=TEST_PROVIDER_CONFIG)
         
         # Send message
         msg = sender.send_message(
@@ -53,7 +61,7 @@ class TestMessagePassing:
         
     def test_agent_receive_message(self):
         """Test agent can receive and process messages."""
-        agent = TranscendentalAgent(name="receiver", role="processor")
+        agent = TranscendentalAgent(name="receiver", role="processor", provider_config=TEST_PROVIDER_CONFIG)
         
         # Create incoming message
         msg = Message(
@@ -80,8 +88,8 @@ class TestMessagePassing:
         
     def test_bidirectional_communication(self):
         """Test [A]⇄[A] bidirectional communication."""
-        agent1 = TranscendentalAgent(name="questioner", role="curious")
-        agent2 = TranscendentalAgent(name="answerer", role="knowledgeable")
+        agent1 = TranscendentalAgent(name="questioner", role="curious", provider_config=TEST_PROVIDER_CONFIG)
+        agent2 = TranscendentalAgent(name="answerer", role="knowledgeable", provider_config=TEST_PROVIDER_CONFIG)
         
         # Connect agents
         agent1.connect_to(agent2)
@@ -112,9 +120,9 @@ class TestMessagePassing:
     def test_message_routing(self):
         """Test messages route correctly in multi-agent system."""
         agents = {
-            "coordinator": TranscendentalAgent(name="coordinator", role="orchestrator"),
-            "worker1": TranscendentalAgent(name="worker1", role="processor"),
-            "worker2": TranscendentalAgent(name="worker2", role="analyzer")
+            "coordinator": TranscendentalAgent(name="coordinator", role="orchestrator", provider_config=TEST_PROVIDER_CONFIG),
+            "worker1": TranscendentalAgent(name="worker1", role="processor", provider_config=TEST_PROVIDER_CONFIG),
+            "worker2": TranscendentalAgent(name="worker2", role="analyzer", provider_config=TEST_PROVIDER_CONFIG)
         }
         
         # Set up routing
@@ -141,7 +149,7 @@ class TestMessagePassing:
         
     def test_message_history_preserved(self):
         """Test cognitive trace preserved across messages."""
-        agent = TranscendentalAgent(name="historian", role="recorder")
+        agent = TranscendentalAgent(name="historian", role="recorder", provider_config=TEST_PROVIDER_CONFIG)
         
         # Process first message
         msg1 = Message(
@@ -177,7 +185,7 @@ class TestMessagePassing:
         
     def test_message_type_handling(self):
         """Test different message types handled appropriately."""
-        agent = TranscendentalAgent(name="handler", role="responder")
+        agent = TranscendentalAgent(name="handler", role="responder", provider_config=TEST_PROVIDER_CONFIG)
         
         message_types = [
             (MessageType.QUERY, "What is X?", "should_answer"),

@@ -37,6 +37,11 @@ class Message:
     in_reply_to: Optional[str] = None
     metadata: Dict[str, Any] = field(default_factory=dict)
     
+    @property
+    def maintains_imperatives(self) -> bool:
+        """Check if message maintains transcendental imperatives."""
+        return self.metadata.get("maintains_imperatives", True)
+    
     def to_dict(self) -> Dict[str, Any]:
         """Convert message to dictionary format."""
         return {

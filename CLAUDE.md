@@ -52,16 +52,57 @@ Framework ensures ∀[A]: [A]⊨(P1→P2→P3→P4→↻) regardless of role:
 
 ## Development Methodology
 
-### TDD: [RED]→[GREEN]→[REFACTOR]→↻
+### TDD: Real Behavior Validation
 
-#### 15-Minute Rule
+#### [RED]→[GREEN]→[REFACTOR]→↻
+
+##### 15-Minute Rule
 thinking > 15min ⇒ write_test
 
-#### Daily Success Metrics
+##### Daily Success Metrics
 - tests_written ≥ 10 ∧ status:[GREEN]
 - commits ≥ 5 ∧ status:[Merged]
 - ∃demo: [A]⇄[A] interaction
 - code_runs = ✓
+- RUN_LLM_TESTS=1 executed ≥ 1
+
+#### ■ FORBIDDEN Mock Patterns
+
+```python
+# ✗ NEVER mock agent behavior
+def test_agent_responds():
+    mock_agent = Mock()
+    mock_agent.process.return_value = "mocked"
+    
+# ✗ NEVER mock message passing
+def test_message_flow():
+    mock_message = Mock(spec=Message)
+    mock_orchestrator.send = Mock()
+```
+
+#### ■ REQUIRED Behavior Patterns
+
+```python
+# ✓ Test REAL agent instantiation
+def test_agent_real_behavior():
+    agent = Agent(model="gemini-flash")
+    response = agent.process(Message(...))
+    assert response.demonstrates(P1→P2→P3→P4)
+    
+# ✓ Test ACTUAL message flow
+def test_message_passing():
+    orchestrator = Orchestrator()
+    agents = [Agent(...), Agent(...)]
+    result = orchestrator.coordinate(agents, task)
+    assert result.reflects_actual_behavior()
+```
+
+#### ■ Mock Test Debt Rule
+
+∀test ∈ codebase:
+- mock_used ⇒ comment:"TODO: Convert to behavior test"
+- PR_review ⇒ flag_mocks_for_refactor
+- mock_count ↗ ⇒ immediate_refactor_required
 
 #### ■ Prime Directive
 working_software > philosophical_correctness
@@ -135,6 +176,47 @@ See: **TDD_IMPERATIVES.md**
 - integration_points ∧ major_components  
 - approval_gate ∨ P1→P2→P3→P4 validation
 
+### ■ STOP Conditions for [O]
+
+#### IMMEDIATE STOP → DELEGATE Pattern
+
+∃(condition) ⇒ [O]:STOP→[A]
+
+1. **Code Writing Detected**
+   ```
+   [O]: "Let me implement..." → STOP
+   [O]→[A]: "Implement X with requirements Y"
+   ```
+
+2. **Test Implementation Started**
+   ```
+   [O]: "def test_..." → STOP
+   [O]→[A]: "Write tests for behavior Z"
+   ```
+
+3. **Debugging Beyond Analysis**
+   ```
+   [O]: analysis:✓ → fixing:✗
+   [O]→[A]: "Fix issue with context C"
+   ```
+
+#### [O] ALLOWED
+- Read files for understanding
+- Analyze test failures
+- Design architecture
+- Plan implementation strategy
+- Review [A] outputs
+- Make decisions
+- Coordinate multiple [A]s
+
+#### [O] FORBIDDEN
+- Write any code
+- Implement any tests
+- Execute fixes
+- Create files
+- Modify implementation
+- Run tests directly
+
 ## Human Approval Gates
 
 ### ⚠ STOP Points (2 only):
@@ -171,6 +253,68 @@ Morning→Development→Testing→Evening→↻
 2. **Development**: TDD_IMPERATIVES.md ∧ (stuck⇒GEMINI_CONSULTATION.md)
 3. **Testing**: PLAYWRIGHT_TESTING.md→UI_validation
 4. **Evening**: MEMORY_SERVICE_USE.md→store_session→update→commit→push
+
+## LLM Testing Requirements
+
+### ■ When [O] MUST Instruct RUN_LLM_TESTS=1
+
+#### Mandatory Triggers
+1. **New Agent Implementation**
+   ```
+   [A]: "Implemented DebugAgent"
+   [O]→[A]: "Run with RUN_LLM_TESTS=1 pytest tests/test_debug_agent.py"
+   ```
+
+2. **Message Protocol Changes**
+   ```
+   [A]: "Modified message handling"
+   [O]→[A]: "Validate with RUN_LLM_TESTS=1 pytest -k message"
+   ```
+
+3. **Paradigm Complete**
+   ```
+   [A]: "All tests passing"
+   [O]→[A]: "Final validation: RUN_LLM_TESTS=1 pytest paradigms/"
+   ```
+
+4. **Before ANY PR**
+   ```
+   [O]→[A]: "Pre-PR check: RUN_LLM_TESTS=1 pytest"
+   ```
+
+### ■ Two-Tier Testing Strategy
+
+#### Tier 1: Fast Feedback (Default)
+```bash
+pytest  # Mock-based, <1s per test
+```
+- Structural validation
+- Interface contracts
+- Error handling
+- State management
+
+#### Tier 2: Behavior Validation (RUN_LLM_TESTS=1)
+```bash
+RUN_LLM_TESTS=1 pytest  # Real LLMs, 5-30s per test
+```
+- Agent reasoning verification
+- P1→P2→P3→P4 demonstration
+- Multi-agent orchestration
+- Emergent behaviors
+
+### ■ [O] Decision Tree
+
+```
+test_results_received:
+    all:[GREEN] ∧ RUN_LLM_TESTS=None?
+        → [O]→[A]: "Run with RUN_LLM_TESTS=1"
+    
+    some:[RED] ∧ mock_tests?
+        → [O]→[A]: "Debug with mocks first"
+        
+    all:[GREEN] ∧ RUN_LLM_TESTS=1?
+        → [O]: "Ready for integration"
+```
 
 ## Success Metrics
 
@@ -243,6 +387,10 @@ WHILE ¬approval_gate:
     - success = "Tests pass" ∧ ¬"Amazing!"
     - completion = "Task complete" ∧ ¬"Perfect!"
     - quality = objective_metrics ∧ ¬subjective_claims
+11. **■ REFACTOR TRIGGER**: mock_count > behavior_test_count ⇒ immediate_refactor
+    - [O] detects: mocks >> real_tests
+    - [O]→[A]: "Refactor tests to use behavior validation"
+    - Priority: HIGH when mock_ratio > 2:1
 
 ## ■ Mandatory Consultation Triggers
 
