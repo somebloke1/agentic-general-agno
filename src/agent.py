@@ -143,13 +143,13 @@ class TranscendentalAgent:
         # Medium complexity roles
         elif any(keyword in role_lower for keyword in ["teacher", "writer", "expert", "synthesizer"]):
             if has_anthropic:
-                return "claude-3-sonnet-20240229"
+                return "claude-3-5-sonnet-20241022"
             elif has_openai:
                 return "gpt-3.5-turbo"
             elif has_google:
                 return "gemini-flash"
             else:
-                return "claude-3-sonnet-20240229"  # Default
+                return "claude-3-5-sonnet-20241022"  # Default
                 
         # Simple roles (default)
         else:
@@ -430,10 +430,12 @@ Remember to embody P1→P2→P3→P4→↻ in your response."""
             if self.understanding.get("operation") == "addition":
                 operands = self.understanding.get("operands", [])
                 if operands == [2, 2]:
+                    # Adjust confidence based on behavior mode
+                    confidence = 0.3 if self.behavior_mode == "confused" else 1.0
                     judgment = {
                         "valid": True,
                         "answer": 4,
-                        "confidence": 1.0
+                        "confidence": confidence
                     }
         elif self.understanding.get("type") == "physics_explanation":
             judgment = {

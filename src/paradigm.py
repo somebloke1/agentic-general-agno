@@ -201,7 +201,7 @@ class Paradigm:
             return "claude-3-haiku-20240307"  # Fast, efficient for simple tasks
         elif any(keyword in role_lower for keyword in complex_roles):
             # More capable models for complex reasoning
-            return "claude-3-sonnet-20240229"  # Balanced capability
+            return "claude-3-5-sonnet-20241022"  # Balanced capability
         else:
             # Default to a balanced model
             return "claude-3-haiku-20240307"
@@ -240,7 +240,7 @@ class Paradigm:
                 {
                     "name": "debugger", 
                     "role": "debugger",
-                    "model": "claude-3-sonnet-20240229"  # More capable for analysis
+                    "model": "claude-3-5-sonnet-20241022"  # More capable for analysis
                 }
             ],
             flow_pattern="express_confusion→analyze→clarify→iterate",
@@ -266,7 +266,7 @@ class Paradigm:
                 {
                     "name": "doctor",
                     "role": "doctor",
-                    "model": "claude-3-sonnet-20240229"  # Doctor role - more capable
+                    "model": "claude-3-5-sonnet-20241022"  # Doctor role - more capable
                 }
             ],
             flow_pattern="describe_symptoms→ask_questions→diagnose→recommend_treatment→understand_treatment",
@@ -339,7 +339,7 @@ class Paradigm:
                 {
                     "name": "analyst",
                     "role": "analyst",
-                    "model": "claude-3-sonnet-20240229"  # Analyst needs strong pattern recognition
+                    "model": "claude-3-5-sonnet-20241022"  # Analyst needs strong pattern recognition
                 },
                 {
                     "name": "trader",
@@ -389,7 +389,7 @@ class Paradigm:
         angry_customer = {
             "name": "angry_customer",
             "role": "Frustrated customer with billing issue",
-            "model": "claude-3-sonnet-20240229"  # Balanced for emotional simulation
+            "model": "claude-3-5-sonnet-20241022"  # Balanced for emotional simulation
         }
         
         confused_elderly = {

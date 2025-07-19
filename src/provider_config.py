@@ -83,26 +83,33 @@ class ModelInfo(NamedTuple):
 PROVIDER_MODELS = {
     "anthropic": {
         "claude-3-opus": "claude-3-opus-20240229",
-        "claude-3-sonnet": "claude-3-sonnet-20240229",
+        "claude-3-sonnet": "claude-3-5-sonnet-20241022",  # Updated to newer model
+        "claude-3-5-sonnet": "claude-3-5-sonnet-20241022",
+        "claude-3-5-sonnet-20241022": "claude-3-5-sonnet-20241022",  # Support full ID
+        "claude-3-5-sonnet-20240620": "claude-3-5-sonnet-20240620",  # Support earlier 3.5 version
         "claude-3-haiku": "claude-3-haiku-20240307",
         "claude-3-haiku-20240307": "claude-3-haiku-20240307",  # Support full ID
-        "claude-3-sonnet-20240229": "claude-3-sonnet-20240229",  # Support full ID
+        "claude-3-sonnet-20240229": "claude-3-5-sonnet-20241022",  # Backward compatibility - redirect to newer model
         "claude-3-opus-20240229": "claude-3-opus-20240229",  # Support full ID
         "claude-2.1": "claude-2.1",
         "claude-2": "claude-2",
         "haiku": "claude-3-haiku-20240307",
         "opus": "claude-3-opus-20240229",
-        "sonnet": "claude-3-sonnet-20240229"
+        "sonnet": "claude-3-5-sonnet-20241022"  # Updated to newer model
     },
     "bedrock": {
         "claude-3-opus": "anthropic.claude-3-opus-20240229-v1:0",
-        "claude-3-sonnet": "anthropic.claude-3-sonnet-20240229-v1:0",
+        "claude-3-sonnet": "anthropic.claude-3-5-sonnet-20241022-v2:0",  # Updated to newer model
+        "claude-3-5-sonnet": "anthropic.claude-3-5-sonnet-20241022-v2:0",
+        "claude-3-5-sonnet-20241022": "anthropic.claude-3-5-sonnet-20241022-v2:0",  # Support full ID
+        "claude-3-5-sonnet-20240620": "anthropic.claude-3-5-sonnet-20240620-v1:0",  # Support earlier 3.5 version
         "claude-3-haiku": "anthropic.claude-3-haiku-20240307-v1:0",
+        "claude-3-sonnet-20240229": "anthropic.claude-3-5-sonnet-20241022-v2:0",  # Backward compatibility - redirect to newer model
         "claude-2.1": "anthropic.claude-v2:1",
         "claude-2": "anthropic.claude-v2",
         "haiku": "anthropic.claude-3-haiku-20240307-v1:0",
         "opus": "anthropic.claude-3-opus-20240229-v1:0",
-        "sonnet": "anthropic.claude-3-sonnet-20240229-v1:0"
+        "sonnet": "anthropic.claude-3-5-sonnet-20241022-v2:0"  # Updated to newer model
     },
     "openai": {
         "gpt-4": "gpt-4",
